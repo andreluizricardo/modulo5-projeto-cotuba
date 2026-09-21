@@ -9,12 +9,8 @@ import java.nio.file.Paths;
 import java.util.Comparator;
 
 public class LeitorOpcoesCLI {
-    private Path diretorioMD;
-    private String formato;
-    private Path arquivoSaida;
-    private boolean modoVerboso = false;
 
-    public void ler(String[] args) {
+    public ParametrosCotuba ler(String[] args) {
         var options = new Options();
 
         var opcaoDeDiretorioDosMD = new Option("d", "dir", true,
@@ -47,6 +43,13 @@ public class LeitorOpcoesCLI {
 
         try {
 
+            Path diretorioMD;
+            FormatoEbook formato;
+            Path arquivoSaida;
+            boolean modoVerboso = false;
+
+            var parametrosCotuba = new ParametrosCotuba();
+
             String nomeDoDiretorioDosMD = cmd.getOptionValue("dir");
 
             if (nomeDoDiretorioDosMD != null) {
@@ -62,16 +65,20 @@ public class LeitorOpcoesCLI {
             String nomeDoFormatoDoEbook = cmd.getOptionValue("format");
 
             if (nomeDoFormatoDoEbook != null) {
-                formato = nomeDoFormatoDoEbook.toLowerCase();
+                try {
+                     formato = FormatoEbook.valueOf(nomeDoFormatoDoEbook.toUpperCase());
+                } catch (IllegalArgumentException ex) {
+                    throw new IllegalArgumentException("Formato do ebook inválido: " + nomeDoFormatoDoEbook, ex);
+                }
             } else {
-                formato = "pdf";
+                formato = FormatoEbook.PDF;
             }
 
             String nomeDoArquivoDeSaidaDoEbook = cmd.getOptionValue("output");
             if (nomeDoArquivoDeSaidaDoEbook != null) {
                 arquivoSaida = Paths.get(nomeDoArquivoDeSaidaDoEbook);
             } else {
-                arquivoSaida = Paths.get("book." + formato.toLowerCase());
+                arquivoSaida = Paths.get("book." + formato.name().toLowerCase());
             }
             if (Files.isDirectory(arquivoSaida)) {
                 // deleta arquivos do diretório recursivamente
@@ -82,40 +89,15 @@ public class LeitorOpcoesCLI {
             }
 
             modoVerboso = cmd.hasOption("verbose");
+
+            parametrosCotuba.setDiretorioMD(diretorioMD);
+            parametrosCotuba.setFormato(formato);
+            parametrosCotuba.setArquivoSaida(arquivoSaida);
+            parametrosCotuba.setModoVerboso(modoVerboso);
+
+            return parametrosCotuba;
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
-    }
-
-    public Path getDiretorioMD() {
-        return diretorioMD;
-    }
-
-    public void setDiretorioMD(Path diretorioMD) {
-        this.diretorioMD = diretorioMD;
-    }
-
-    public String getFormato() {
-        return formato;
-    }
-
-    public void setFormato(String formato) {
-        this.formato = formato;
-    }
-
-    public Path getArquivoSaida() {
-        return arquivoSaida;
-    }
-
-    public void setArquivoSaida(Path arquivoSaida) {
-        this.arquivoSaida = arquivoSaida;
-    }
-
-    public boolean isModoVerboso() {
-        return modoVerboso;
-    }
-
-    public void setModoVerboso(boolean modoVerboso) {
-        this.modoVerboso = modoVerboso;
     }
 }
