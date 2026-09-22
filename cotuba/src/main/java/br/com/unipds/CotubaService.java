@@ -1,16 +1,39 @@
 package br.com.unipds;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+
+import java.nio.file.Path;
 import java.util.List;
 
+@ApplicationScoped
 public class CotubaService {
-    public void executar(ParametrosCotuba parametrosCotuba) {
 
-        var renderizadorMarkdown = new RenderizadorMarkdown();
-        List<Capitulo> capitulos = renderizadorMarkdown.renderizar(parametrosCotuba.getDiretorioMD());
+    private final RenderizadorMarkdown renderizadorMarkdown;
+    private final LeitorPropriedadesEbook leitorPropriedadesEbook;
+    private final RepositorioMarkdowns repositoriosMarkdowns;
+    private final GeradorEbook geradorEPUB;
+    private final GeradorEbook geradorPDF;
+    @Inject
+    public CotubaService(RenderizadorMarkdown renderizadorMarkdown,
+                         LeitorPropriedadesEbook leitorPropriedadesEbook,
+                         RepositorioMarkdowns repositoriosMarkdowns,
+                         @Named("geradorEPUB") GeradorEbook geradorEPUB,
+                         @Named("geradorPDF") GeradorEbook geradorPDF) {
+        this.renderizadorMarkdown = renderizadorMarkdown;
+        this.leitorPropriedadesEbook = leitorPropriedadesEbook;
+        this.repositoriosMarkdowns = repositoriosMarkdowns;
+        this.geradorEPUB = geradorEPUB;
+        this.geradorPDF = geradorPDF;
+    }
+
+    public void executar(ParametrosCotuba parametrosCotuba) {
+        Path diretorioMD = parametrosCotuba.getDiretorioMD();
+        List<Capitulo> capitulos = repositoriosMarkdowns.buscar(diretorioMD);
+        renderizadorMarkdown.renderizar(capitulos);
 
         var ebook = new Ebook();
-
-        var leitorPropriedadesEbook = new LeitorPropriedadesEbook();
 
         leitorPropriedadesEbook.ler(parametrosCotuba.getDiretorioMD(), ebook);
 
@@ -22,15 +45,15 @@ public class CotubaService {
         ebook.setFormato(parametrosCotuba.getFormato());
         ebook.setArquivoSaida(parametrosCotuba.getArquivoSaida());
 
+        GeradorEbook geradorEbook;
         if (FormatoEbook.PDF.equals(ebook.getFormato())) {
-            var geradorPdf = new GeradorPDF();
-            geradorPdf.gerarPDF(ebook);
-
+            geradorEbook = geradorPDF;
         } else if (FormatoEbook.EPUB.equals(ebook.getFormato())) {
-            var geradorEpub = new GeradorEPUB();
-            geradorEpub.gerarEpub(ebook);
+            geradorEbook = geradorEPUB;
         } else {
             throw new IllegalArgumentException("Formato do ebook inválido: " + parametrosCotuba.getFormato());
         }
+
+        geradorEbook.gerar(ebook);
     }
 }

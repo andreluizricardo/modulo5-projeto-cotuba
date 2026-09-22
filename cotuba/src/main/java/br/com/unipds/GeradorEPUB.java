@@ -1,33 +1,27 @@
 package br.com.unipds;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 import nl.siegmann.epublib.domain.Author;
 import nl.siegmann.epublib.domain.Book;
 import nl.siegmann.epublib.domain.GuideReference;
 import nl.siegmann.epublib.domain.Resource;
 import nl.siegmann.epublib.epub.EpubWriter;
 import nl.siegmann.epublib.service.MediatypeService;
-import org.commonmark.node.AbstractVisitor;
-import org.commonmark.node.Heading;
-import org.commonmark.node.Node;
-import org.commonmark.node.Text;
-import org.commonmark.parser.Parser;
-import org.commonmark.renderer.html.HtmlRenderer;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.PathMatcher;
 import java.util.List;
-import java.util.stream.Stream;
 
-public class GeradorEPUB {
+@ApplicationScoped @Named("geradorEPUB")
+public class GeradorEPUB implements GeradorEbook {
 
-    public void gerarEpub(Ebook ebook) {
+    public void gerar(Ebook ebook) {
         List<Capitulo> capitulos = ebook.getCapitulos();
         Path arquivoSaida = ebook.getArquivoSaida();
         try {
