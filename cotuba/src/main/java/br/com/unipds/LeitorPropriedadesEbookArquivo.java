@@ -12,7 +12,7 @@ import java.util.Properties;
 @ApplicationScoped
 public class LeitorPropriedadesEbookArquivo implements LeitorPropriedadesEbook {
     @Override
-    public void ler(Path diretorioMD, Ebook ebook) {
+    public PropriedadesEbook ler(Path diretorioMD) {
 
         Path arquivoProperties = diretorioMD.resolve("ebook.properties");
 
@@ -35,8 +35,7 @@ public class LeitorPropriedadesEbookArquivo implements LeitorPropriedadesEbook {
         String autor = proprieadeAutor;
         validarPropriedade(autor, proprieadeAutor);
 
-        ebook.setTitulo(titulo);
-        ebook.setAutor(autor);
+        return new PropriedadesEbook(titulo, autor);
     }
 
     private void validarPropriedade(String valor, String proprieade) {

@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 @ApplicationScoped
 public class RepositorioMarkdownsDiretorio implements RepositorioMarkdowns {
 
-    public List<Capitulo> buscar(Path diretorioMD) {
+    public List<Markdown> buscar(Path diretorioMD) {
         PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**/*.md");
         try (Stream<Path> streamMDs = Files.list(diretorioMD)) {
             List<Path> arquivosMD = streamMDs
@@ -27,12 +27,8 @@ public class RepositorioMarkdownsDiretorio implements RepositorioMarkdowns {
 
             return arquivosMD.stream().map(arquivoMD -> {
                 try {
-                    var capitulo = new Capitulo();
-                    String markdown = Files.readString(arquivoMD);
-                    capitulo.setMarkdown(markdown);
-                    capitulo.setArquivoMarkdown(arquivoMD);
-
-                    return capitulo;
+                    String conteudo = Files.readString(arquivoMD);
+                    return new Markdown(conteudo, arquivoMD);
                 } catch (IOException ex) {
                     throw new IllegalStateException("Erro ao ler arquivo: " + arquivoMD ,ex);
                 }

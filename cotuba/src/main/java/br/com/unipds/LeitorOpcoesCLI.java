@@ -50,8 +50,6 @@ public class LeitorOpcoesCLI {
             Path arquivoSaida;
             boolean modoVerboso = false;
 
-            var parametrosCotuba = new ParametrosCotuba();
-
             String nomeDoDiretorioDosMD = cmd.getOptionValue("dir");
 
             if (nomeDoDiretorioDosMD != null) {
@@ -92,12 +90,7 @@ public class LeitorOpcoesCLI {
 
             modoVerboso = cmd.hasOption("verbose");
 
-            parametrosCotuba.setDiretorioMD(diretorioMD);
-            parametrosCotuba.setFormato(formato);
-            parametrosCotuba.setArquivoSaida(arquivoSaida);
-            parametrosCotuba.setModoVerboso(modoVerboso);
-
-            return parametrosCotuba;
+            return new ParametrosCotuba(diretorioMD, formato, arquivoSaida, modoVerboso);
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
