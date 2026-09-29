@@ -4,6 +4,7 @@ import br.com.unipds.cotuba.domain.EbookBuilder;
 import br.com.unipds.cotuba.domain.Capitulo;
 import br.com.unipds.cotuba.domain.Markdown;
 import br.com.unipds.cotuba.dto.ParametrosCotuba;
+import br.com.unipds.cotuba.plugin.Plugin;
 import br.com.unipds.cotuba.ports.in.CotubaUseCase;
 import br.com.unipds.cotuba.ports.out.GeradorEbook;
 import br.com.unipds.cotuba.ports.out.LeitorPropriedadesEbook;
@@ -18,6 +19,7 @@ import org.jmolecules.ddd.annotation.Service;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.ServiceLoader;
 
 @Service
 @ApplicationScoped
@@ -60,5 +62,9 @@ public class CotubaService implements CotubaUseCase {
 
         GeradorEbook geradorEbook = geradoresEbook.select(FormatoEbookFilter.of(ebook.formato())).get();
         geradorEbook.gerar(ebook, parametrosCotuba.arquivoSaida());
+
+        for (Plugin plugin : ServiceLoader.load(Plugin.class)){
+            plugin.aposGeracao(ebook);
+        }
     }
 }

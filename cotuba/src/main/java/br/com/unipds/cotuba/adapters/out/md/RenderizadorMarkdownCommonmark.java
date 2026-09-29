@@ -3,6 +3,7 @@ package br.com.unipds.cotuba.adapters.out.md;
 import br.com.unipds.cotuba.domain.CapituloBuilder;
 import br.com.unipds.cotuba.domain.Capitulo;
 import br.com.unipds.cotuba.domain.Markdown;
+import br.com.unipds.cotuba.plugin.Plugin;
 import br.com.unipds.cotuba.ports.out.RenderizadorMarkdown;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.commonmark.node.AbstractVisitor;
@@ -13,6 +14,7 @@ import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 
 import java.util.List;
+import java.util.ServiceLoader;
 
 @ApplicationScoped
 public class RenderizadorMarkdownCommonmark implements RenderizadorMarkdown {
@@ -48,6 +50,14 @@ public class RenderizadorMarkdownCommonmark implements RenderizadorMarkdown {
             try {
                 HtmlRenderer renderer = HtmlRenderer.builder().build();
                 String html = renderer.render(document);
+
+                for (Plugin plugin : ServiceLoader.load(Plugin.class)) {
+                    String htmlProcessado = plugin.aposRenderizacao(html);
+                    if(htmlProcessado != null && !htmlProcessado.isBlank()) {
+                        html = htmlProcessado;
+                    }
+                }
+
                 capitulo.html(html);
 
             } catch (Exception ex) {
