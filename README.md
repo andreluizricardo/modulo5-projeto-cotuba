@@ -75,3 +75,8 @@ Você pode usar a flag `-o` para definir o nome exato e o caminho do arquivo ger
 ```bash
 java -jar target/cotuba-1.0-SNAPSHOT.jar -d ../apostila-design -o apostila-design.pdf
 ```
+
+## Decisões Arquiteturais (ADRs)
+
+- [ADR 001: Geração de ebooks via Mensageria Assincrona](arquitetura/adr/adr-001-geracao-ebooks-assincrona.md)
+- [ADR 002: Introdução de Cache em memória para o Catálogo de E-books](arquitetura/adr/adr-002-cache-catalogo.md)

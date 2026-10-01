@@ -2,17 +2,13 @@ package br.com.unipds.estatisticas;
 
 import br.com.unipds.cotuba.domain.Capitulo;
 import br.com.unipds.cotuba.domain.Ebook;
-import br.com.unipds.cotuba.plugin.Plugin;
+import br.com.unipds.cotuba.plugin.PluginAposGeracao;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.util.Map;
 
-public class PluginEstatisticas implements Plugin {
-    @Override
-    public String aposRenderizacao(String html) {
-        return "";
-    }
+public class PluginEstatisticas implements PluginAposGeracao {
 
     @Override
     public void aposGeracao(Ebook ebook) {
