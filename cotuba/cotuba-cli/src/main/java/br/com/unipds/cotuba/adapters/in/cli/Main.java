@@ -14,7 +14,7 @@ public class Main {
         }
     }
 
-     int executar(String[] args) {
+    int executar(String[] args) {
         boolean modoVerboso = true;
 
         try(SeContainer container = SeContainerInitializer.newInstance().initialize()) {
